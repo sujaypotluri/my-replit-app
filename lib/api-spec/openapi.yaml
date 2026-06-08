@@ -1,22 +1,35 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: B2B AI Marketing Platform API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: analytics
+    description: Analytics and campaign metrics
+  - name: licenses
+    description: License management
+  - name: users
+    description: User management
+  - name: clients
+    description: Client organization management
+  - name: departments
+    description: Department management
+  - name: audit
+    description: Audit logs
+  - name: activity
+    description: Activity feed
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +37,1050 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # ── Analytics ──────────────────────────────────────────────────────────────
+  /analytics/dashboard:
+    get:
+      operationId: getDashboardStats
+      tags: [analytics]
+      summary: Get top-level KPI dashboard stats
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /analytics/campaigns:
+    get:
+      operationId: getCampaigns
+      tags: [analytics]
+      summary: List campaigns with metrics
+      parameters:
+        - name: clientId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: dateRange
+          in: query
+          schema:
+            type: ["string", "null"]
+            enum: [today, week, month, quarter, null]
+      responses:
+        "200":
+          description: Campaign list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Campaign"
+
+  /analytics/breakdown:
+    get:
+      operationId: getAnalyticsBreakdown
+      tags: [analytics]
+      summary: Get analytics broken down by client, department, or role
+      parameters:
+        - name: groupBy
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [client, department, role]
+      responses:
+        "200":
+          description: Analytics breakdown
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BreakdownEntry"
+
+  /analytics/trends:
+    get:
+      operationId: getAnalyticsTrends
+      tags: [analytics]
+      summary: Get trend data for charts (time series)
+      parameters:
+        - name: metric
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [impressions, ctr, leads, seats, utilization]
+        - name: days
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Trend data points
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrendPoint"
+
+  # ── Clients ─────────────────────────────────────────────────────────────────
+  /clients:
+    get:
+      operationId: getClients
+      tags: [clients]
+      summary: List all client organizations
+      responses:
+        "200":
+          description: Client list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Client"
+    post:
+      operationId: createClient
+      tags: [clients]
+      summary: Create a new client organization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientInput"
+      responses:
+        "201":
+          description: Created client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+
+  /clients/{id}:
+    get:
+      operationId: getClient
+      tags: [clients]
+      summary: Get a client by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateClient
+      tags: [clients]
+      summary: Update a client
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientUpdate"
+      responses:
+        "200":
+          description: Updated client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+
+  # ── Departments ──────────────────────────────────────────────────────────────
+  /departments:
+    get:
+      operationId: getDepartments
+      tags: [departments]
+      summary: List departments
+      parameters:
+        - name: clientId
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Department list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Department"
+    post:
+      operationId: createDepartment
+      tags: [departments]
+      summary: Create a department
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DepartmentInput"
+      responses:
+        "201":
+          description: Created department
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Department"
+
+  # ── Users ────────────────────────────────────────────────────────────────────
+  /users:
+    get:
+      operationId: getUsers
+      tags: [users]
+      summary: List users
+      parameters:
+        - name: clientId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: departmentId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: role
+          in: query
+          schema:
+            type: ["string", "null"]
+            enum: [super_admin, client_admin, dept_manager, end_user, null]
+        - name: status
+          in: query
+          schema:
+            type: ["string", "null"]
+            enum: [active, inactive, at_risk, pending, null]
+      responses:
+        "200":
+          description: User list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      operationId: createUser
+      tags: [users]
+      summary: Create / invite a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserInput"
+      responses:
+        "201":
+          description: Created user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get a user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateUser
+      tags: [users]
+      summary: Update a user (role, department, status)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      summary: Delete / deactivate a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /users/bulk-invite:
+    post:
+      operationId: bulkInviteUsers
+      tags: [users]
+      summary: Bulk invite users by email list
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkInviteInput"
+      responses:
+        "200":
+          description: Bulk invite result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BulkInviteResult"
+
+  # ── Licenses ─────────────────────────────────────────────────────────────────
+  /licenses:
+    get:
+      operationId: getLicenses
+      tags: [licenses]
+      summary: List all licenses / license pools
+      parameters:
+        - name: clientId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: type
+          in: query
+          schema:
+            type: ["string", "null"]
+            enum: [seed, purchase, null]
+      responses:
+        "200":
+          description: License list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/License"
+    post:
+      operationId: createLicense
+      tags: [licenses]
+      summary: Create a new license pool
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LicenseInput"
+      responses:
+        "201":
+          description: Created license
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/License"
+
+  /licenses/{id}:
+    get:
+      operationId: getLicense
+      tags: [licenses]
+      summary: Get a license pool by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: License
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/License"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateLicense
+      tags: [licenses]
+      summary: Update a license pool (threshold, settings)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LicenseUpdate"
+      responses:
+        "200":
+          description: Updated license
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/License"
+    delete:
+      operationId: deleteLicense
+      tags: [licenses]
+      summary: Delete a license pool
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /licenses/pool-summary:
+    get:
+      operationId: getLicensePoolSummary
+      tags: [licenses]
+      summary: Get aggregated pool summary (active, inactive, available, at-risk)
+      parameters:
+        - name: clientId
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Pool summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LicensePoolSummary"
+
+  # ── License Seats ─────────────────────────────────────────────────────────────
+  /seats:
+    get:
+      operationId: getSeats
+      tags: [licenses]
+      summary: List license seat assignments
+      parameters:
+        - name: licenseId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: status
+          in: query
+          schema:
+            type: ["string", "null"]
+            enum: [active, inactive, reserved, at_risk, null]
+      responses:
+        "200":
+          description: Seat list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Seat"
+
+  /seats/{id}/assign:
+    post:
+      operationId: assignSeat
+      tags: [licenses]
+      summary: Assign a seat to a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SeatAssignInput"
+      responses:
+        "200":
+          description: Updated seat
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Seat"
+
+  /seats/{id}/release:
+    post:
+      operationId: releaseSeat
+      tags: [licenses]
+      summary: Manually release a seat
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Released seat
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Seat"
+
+  /seats/{id}/revoke:
+    post:
+      operationId: revokeSeat
+      tags: [licenses]
+      summary: Revoke a seat (admin override)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Revoked seat
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Seat"
+
+  # ── Audit Logs ────────────────────────────────────────────────────────────────
+  /audit-logs:
+    get:
+      operationId: getAuditLogs
+      tags: [audit]
+      summary: List audit log entries
+      parameters:
+        - name: entityType
+          in: query
+          schema:
+            type: ["string", "null"]
+            enum: [license, seat, user, role, client, null]
+        - name: clientId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: limit
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Audit log list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuditLog"
+
+  # ── Activity Feed ─────────────────────────────────────────────────────────────
+  /activity-feed:
+    get:
+      operationId: getActivityFeed
+      tags: [activity]
+      summary: Get live activity feed events
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Activity events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityEvent"
+
 components:
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
         status:
           type: string
-      required:
-        - status
 
+    # ── Analytics Schemas ──────────────────────────────────────────────────────
+    DashboardStats:
+      type: object
+      required:
+        - totalImpressions
+        - ctr
+        - leadsCapured
+        - activeSeats
+        - inactiveSeats
+        - availableLicenses
+        - totalLicenses
+        - supportLoad
+        - utilizationRate
+        - atRiskSeats
+      properties:
+        totalImpressions:
+          type: integer
+        ctr:
+          type: number
+        leadsCapured:
+          type: integer
+        activeSeats:
+          type: integer
+        inactiveSeats:
+          type: integer
+        availableLicenses:
+          type: integer
+        totalLicenses:
+          type: integer
+        supportLoad:
+          type: integer
+        utilizationRate:
+          type: number
+        atRiskSeats:
+          type: integer
+
+    Campaign:
+      type: object
+      required: [id, name, clientId, clientName, impressions, ctr, leads, status, startDate]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        clientId:
+          type: integer
+        clientName:
+          type: string
+        impressions:
+          type: integer
+        ctr:
+          type: number
+        leads:
+          type: integer
+        leadQuality:
+          type: ["string", "null"]
+          enum: [high, medium, low, null]
+        status:
+          type: string
+          enum: [active, paused, completed, draft]
+        startDate:
+          type: string
+        endDate:
+          type: ["string", "null"]
+
+    BreakdownEntry:
+      type: object
+      required: [label, impressions, ctr, leads, seats, utilization]
+      properties:
+        label:
+          type: string
+        impressions:
+          type: integer
+        ctr:
+          type: number
+        leads:
+          type: integer
+        seats:
+          type: integer
+        utilization:
+          type: number
+
+    TrendPoint:
+      type: object
+      required: [date, value]
+      properties:
+        date:
+          type: string
+        value:
+          type: number
+
+    # ── Client Schemas ─────────────────────────────────────────────────────────
+    Client:
+      type: object
+      required: [id, name, status, totalLicenses, activeSeats, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        industry:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [active, inactive, suspended]
+        totalLicenses:
+          type: integer
+        activeSeats:
+          type: integer
+        inactiveSeats:
+          type: integer
+        utilizationRate:
+          type: ["number", "null"]
+        createdAt:
+          type: string
+        contactEmail:
+          type: ["string", "null"]
+
+    ClientInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        industry:
+          type: ["string", "null"]
+        contactEmail:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [active, inactive, suspended]
+
+    ClientUpdate:
+      type: object
+      properties:
+        name:
+          type: ["string", "null"]
+        industry:
+          type: ["string", "null"]
+        contactEmail:
+          type: ["string", "null"]
+        status:
+          type: ["string", "null"]
+          enum: [active, inactive, suspended, null]
+
+    # ── Department Schemas ──────────────────────────────────────────────────────
+    Department:
+      type: object
+      required: [id, name, clientId, memberCount, activeSeatCount, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        clientId:
+          type: integer
+        clientName:
+          type: ["string", "null"]
+        memberCount:
+          type: integer
+        activeSeatCount:
+          type: integer
+        createdAt:
+          type: string
+
+    DepartmentInput:
+      type: object
+      required: [name, clientId]
+      properties:
+        name:
+          type: string
+        clientId:
+          type: integer
+
+    # ── User Schemas ───────────────────────────────────────────────────────────
+    User:
+      type: object
+      required: [id, email, name, role, status, createdAt]
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [super_admin, client_admin, dept_manager, end_user]
+        status:
+          type: string
+          enum: [active, inactive, at_risk, pending]
+        clientId:
+          type: ["integer", "null"]
+        clientName:
+          type: ["string", "null"]
+        departmentId:
+          type: ["integer", "null"]
+        departmentName:
+          type: ["string", "null"]
+        seatId:
+          type: ["integer", "null"]
+        lastActiveAt:
+          type: ["string", "null"]
+        inactiveDays:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+
+    UserInput:
+      type: object
+      required: [email, name, role]
+      properties:
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [super_admin, client_admin, dept_manager, end_user]
+        clientId:
+          type: ["integer", "null"]
+        departmentId:
+          type: ["integer", "null"]
+
+    UserUpdate:
+      type: object
+      properties:
+        name:
+          type: ["string", "null"]
+        role:
+          type: ["string", "null"]
+          enum: [super_admin, client_admin, dept_manager, end_user, null]
+        status:
+          type: ["string", "null"]
+          enum: [active, inactive, at_risk, pending, null]
+        departmentId:
+          type: ["integer", "null"]
+
+    BulkInviteInput:
+      type: object
+      required: [emails, role, clientId]
+      properties:
+        emails:
+          type: array
+          items:
+            type: string
+        role:
+          type: string
+          enum: [client_admin, dept_manager, end_user]
+        clientId:
+          type: integer
+        departmentId:
+          type: ["integer", "null"]
+
+    BulkInviteResult:
+      type: object
+      required: [invited, failed, total]
+      properties:
+        invited:
+          type: integer
+        failed:
+          type: integer
+        total:
+          type: integer
+        errors:
+          type: array
+          items:
+            type: string
+
+    # ── License Schemas ────────────────────────────────────────────────────────
+    License:
+      type: object
+      required: [id, name, type, clientId, totalSeats, activeSeats, inactiveSeats, availableSeats, status, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+          enum: [seed, purchase]
+        clientId:
+          type: integer
+        clientName:
+          type: ["string", "null"]
+        totalSeats:
+          type: integer
+        activeSeats:
+          type: integer
+        inactiveSeats:
+          type: integer
+        availableSeats:
+          type: integer
+        reservedSeats:
+          type: integer
+        atRiskSeats:
+          type: integer
+        status:
+          type: string
+          enum: [healthy, at_risk, over_capacity, inactive]
+        inactivityThresholdDays:
+          type: ["integer", "null"]
+        autoRelease:
+          type: boolean
+        expiresAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    LicenseInput:
+      type: object
+      required: [name, type, clientId, totalSeats]
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [seed, purchase]
+        clientId:
+          type: integer
+        totalSeats:
+          type: integer
+        inactivityThresholdDays:
+          type: ["integer", "null"]
+        autoRelease:
+          type: boolean
+        expiresAt:
+          type: ["string", "null"]
+
+    LicenseUpdate:
+      type: object
+      properties:
+        name:
+          type: ["string", "null"]
+        totalSeats:
+          type: ["integer", "null"]
+        inactivityThresholdDays:
+          type: ["integer", "null"]
+        autoRelease:
+          type: ["boolean", "null"]
+        status:
+          type: ["string", "null"]
+          enum: [healthy, at_risk, over_capacity, inactive, null]
+
+    LicensePoolSummary:
+      type: object
+      required: [totalLicenses, totalSeats, activeSeats, inactiveSeats, availableSeats, atRiskSeats, utilizationRate]
+      properties:
+        totalLicenses:
+          type: integer
+        totalSeats:
+          type: integer
+        activeSeats:
+          type: integer
+        inactiveSeats:
+          type: integer
+        availableSeats:
+          type: integer
+        atRiskSeats:
+          type: integer
+        utilizationRate:
+          type: number
+        seedSeats:
+          type: integer
+        purchaseSeats:
+          type: integer
+
+    # ── Seat Schemas ───────────────────────────────────────────────────────────
+    Seat:
+      type: object
+      required: [id, licenseId, status, createdAt]
+      properties:
+        id:
+          type: integer
+        licenseId:
+          type: integer
+        licenseName:
+          type: ["string", "null"]
+        userId:
+          type: ["integer", "null"]
+        userName:
+          type: ["string", "null"]
+        userEmail:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [active, inactive, reserved, at_risk, available]
+        assignedAt:
+          type: ["string", "null"]
+        lastActiveAt:
+          type: ["string", "null"]
+        inactiveDays:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+
+    SeatAssignInput:
+      type: object
+      required: [userId]
+      properties:
+        userId:
+          type: integer
+
+    # ── Audit Log Schemas ──────────────────────────────────────────────────────
+    AuditLog:
+      type: object
+      required: [id, action, entityType, entityId, performedBy, timestamp]
+      properties:
+        id:
+          type: integer
+        action:
+          type: string
+        entityType:
+          type: string
+          enum: [license, seat, user, role, client]
+        entityId:
+          type: integer
+        entityName:
+          type: ["string", "null"]
+        performedBy:
+          type: string
+        performedByRole:
+          type: ["string", "null"]
+        details:
+          type: ["string", "null"]
+        timestamp:
+          type: string
+
+    # ── Activity Feed Schemas ──────────────────────────────────────────────────
+    ActivityEvent:
+      type: object
+      required: [id, type, message, timestamp]
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum: [license_assigned, seat_released, user_invited, role_changed, threshold_crossed, campaign_updated, seat_revoked]
+        message:
+          type: string
+        actor:
+          type: ["string", "null"]
+        clientName:
+          type: ["string", "null"]
+        severity:
+          type: string
+          enum: [info, warning, error, success]
+        timestamp:
+          type: string

@@ -1,0 +1,179 @@
+# **Role:**
+You are a senior product designer, UX architect, and full-stack SaaS builder with expertise in enterprise dashboards, B2B portals, license management systems, operational analytics, and premium visual interfaces. Your job is to design and generate a highly polished B2B AI marketing system that feels like an enterprise-grade product used by real teams every day.
+
+# **Objective:**
+Design and generate a modern B2B AI marketing system website that includes:
+- An internal AI analytics dashboard
+- A license management system
+- A client-facing portal for managing license pools, invitations, user roles, and real-time seat status
+- A multi-tier admin hierarchy
+- Real-time monitoring and clean operational workflows
+
+The final experience must feel premium, futuristic, stylish, clean, and highly polished while remaining easy to scan, simple to use, and visually consistent across all screens.
+
+# **Context:**
+This platform is for enterprise and client-facing use, so it must be designed with clarity, hierarchy, trust, and operational efficiency in mind. The system should support the following roles:
+- Super Admin
+- Client Admin
+- Department Manager
+- End User
+
+The product must include:
+- Active and inactive seed grouping
+- A configurable inactivity threshold
+- Purchase licenses that are never auto-released
+- Real-time license seat monitoring
+- Campaign analytics from one connector platform
+- Live license help metrics
+- Role-based access control
+- Auditability and traceability for all key license and user actions
+- A clean information architecture that reduces cognitive load
+- Fast scanning of critical metrics without visual clutter
+- Strong spacing, alignment, and hierarchy across all screens
+- Consistent component behavior throughout the entire system
+
+The internal dashboard should clearly surface:
+- Campaign impressions
+- CTR
+- Leads captured
+- Lead quality indicators
+- License utilization metrics
+- Live seat health
+- User activity signals
+- Help or support metrics tied to licenses
+- Client-level and department-level breakdowns
+
+The client portal should allow:
+- Client admins and department managers to manage their license pool
+- Invite users
+- Assign roles
+- Track seat availability
+- Monitor active and inactive users in real time
+- Review license allocation history
+- See threshold-based inactivity states
+- Approve, revoke, or reassign seats where appropriate
+
+The design should feel like a sophisticated internal SaaS console, not a generic admin template. It should be elegant, professional, and deeply intentional in both structure and aesthetics.
+
+# **Instructions:**
+## **Instruction 1:**
+Build an internal analytics dashboard that displays campaign impressions, CTR, leads captured, live license help metrics, and real-time seat and license health information. The dashboard should prioritize clarity and hierarchy, with the most important metrics placed prominently at the top in large, visually distinct KPI cards.
+
+Include:
+- Top-level KPI cards for impressions, CTR, leads, active seats, inactive seats, available licenses, and support load
+- Trend charts showing changes over time
+- Breakdown views by client, department, and role
+- A live activity feed showing recent license events, user actions, and campaign updates
+- Filters for date range, client, department, product line, and role
+- Status indicators for active, inactive, at-risk, and over-capacity conditions
+- A clean summary panel that explains the health of the current system in simple terms
+
+Keep the dashboard easy to read. Use clear visual grouping, compact but readable labels, and enough breathing room so the interface never feels overloaded.
+
+## **Instruction 2:**
+Create a license management system with multi-tier role support for Super Admin, Client Admin, Department Manager, and End User. Include active/inactive seed grouping, a configurable inactivity threshold, and license allocation logic where purchase licenses are never auto-released.
+
+The system should support:
+- Role-based permissions
+- Seat assignment and seat release flows
+- License pool summaries
+- Inactive user tracking
+- Configurable inactivity rules
+- Manual override capabilities for admins
+- Purchase license protection so these seats are never released automatically
+- Seed license grouping logic that can detect active versus inactive usage
+- Audit logs for every assignment, reassignment, deactivation, and role change
+- Notifications or warnings when thresholds are crossed
+- Real-time status updates for license availability
+
+Add thoughtful product details such as:
+- Confirmation dialogs for risky actions
+- Inline explanations for license states
+- Color-coded status badges
+- Tooltips for threshold logic
+- Empty states for unused pools
+- Error states for invalid assignments
+- Success states for completed actions
+- A clear audit trail for administrators
+
+## **Instruction 3:**
+Design a client-facing portal/web portal where client admins and department managers can manage their license pool, invite users, assign roles, and monitor seat status. Make it feel like a modern enterprise SaaS product with an elegant navigation structure, clear hierarchy, and polished workflows.
+
+Include:
+- A left navigation panel with clearly grouped sections
+- A top header with global search, notifications, account controls, and live system status
+- A license pool overview page
+- A user management page
+- A role and permission page
+- A seat status page
+- A history and audit log page
+- A support/help metrics page
+- A dashboard for quick overview and monitoring
+
+Support the following workflows:
+- Inviting users by email or bulk upload
+- Assigning a user to a department
+- Assigning or changing roles
+- Viewing which licenses are active, inactive, reserved, or unavailable
+- Reassigning seats when needed
+- Monitoring utilization in real time
+- Filtering by team, department, status, and usage type
+- Viewing the effect of inactivity thresholds on the current license pool
+
+The portal should feel efficient and calm. Every action should be obvious, and every important state should be visible without forcing the user to hunt for it.
+
+## **Instruction 4:**
+Apply a premium visual design system with a neon black theme while keeping the interface clean and readable. The aesthetic should feel futuristic but disciplined, with neon accents used as highlights rather than decoration overload.
+
+Use:
+- Deep black and charcoal backgrounds
+- Neon cyan, electric blue, neon green, neon pink, and neon white accents
+- Soft glowing edges around active components
+- Glassmorphism-style cards with dark transparent surfaces
+- Subtle gradients instead of heavy textures
+- Thin borders and luminous hover states
+- Elegant chart styling with glowing data lines
+- Clear typography with strong contrast
+- Minimal noise and no unnecessary ornamentation
+
+The visual style should feel:
+- Aesthetic
+- Modern
+- Premium
+- Futuristic
+- Refined
+- High-end
+- Professional
+- Calm despite the neon palette
+
+## **Instruction 5:**
+Design the system to be clean, scalable, and production-ready by including usability and operational enhancements that improve clarity and reduce friction.
+
+Add:
+- Empty states that explain what to do next
+- Loading states with elegant skeletons or progress indicators
+- Success, warning, and error states with clear messaging
+- Audit and activity trails
+- Accessible contrast and readable text sizes
+- Mobile and tablet responsive behavior
+- Sticky summary sections for important overview metrics
+- Search and filtering patterns that are intuitive and fast
+- Reduced clutter through smart grouping and progressive disclosure
+- A clear distinction between primary actions and secondary actions
+- Consistent spacing, rounding, icon usage, and panel structure throughout the product
+
+The interface should guide the user naturally, making complex license operations feel simple and controlled.
+
+# **Notes:**
+• Use a neon black background with stylish neon accents such as neon cyan, electric blue, neon green, neon pink, and neon white.
+• Make the UI look aesthetic, modern, premium, futuristic, and highly readable.
+• Include smooth glows, glassmorphism panels, subtle animations, and polished data visualizations.
+• Keep the layout clean and uncluttered with strong spacing, strong typography, and clear section separation.
+• Prefer short labels, compact controls, and visible status badges so the interface stays easy to scan.
+• Use consistent component styling across dashboard cards, tables, modals, side navigation, dropdowns, and alerts.
+• Add empty states, loading states, and success/error feedback so the product feels complete and production-ready.
+• Make important metrics visually dominant while secondary details stay muted and unobtrusive.
+• Use subtle motion only where it helps clarity, such as hover glows, chart transitions, and live status updates.
+• Make role-based access visually obvious so each user immediately understands what they can do.
+• Ensure license rules are transparent, especially around inactivity thresholds and non-auto-released purchase licenses.
+• Keep the entire product feeling clean, organized, premium, and enterprise-ready.
