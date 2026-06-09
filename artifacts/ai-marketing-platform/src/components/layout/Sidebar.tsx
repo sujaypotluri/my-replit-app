@@ -26,7 +26,16 @@ const navigation = [
 
 export function Sidebar() {
   const [location] = useLocation();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    try { return localStorage.getItem("sidebar-collapsed") === "true"; }
+    catch { return false; }
+  });
+
+  const toggle = () => setCollapsed((c) => {
+    const next = !c;
+    try { localStorage.setItem("sidebar-collapsed", String(next)); } catch {}
+    return next;
+  });
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -109,7 +118,7 @@ export function Sidebar() {
         {/* Collapse toggle */}
         <div className="pb-4 px-2 shrink-0">
           <button
-            onClick={() => setCollapsed((c) => !c)}
+            onClick={toggle}
             className={cn(
               "w-full flex items-center gap-2 px-2 py-2 rounded-md text-xs text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-all duration-200",
               collapsed ? "justify-center" : ""
