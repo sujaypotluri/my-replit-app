@@ -6,6 +6,7 @@ import departmentsRouter from "./departments";
 import usersRouter from "./users";
 import licensesRouter from "./licenses";
 import auditRouter from "./audit";
+import aiRouter from "./ai";
 
 const router: IRouter = Router();
 
@@ -16,5 +17,6 @@ router.use(departmentsRouter);
 router.use(usersRouter);
 router.use(licensesRouter);
 router.use(auditRouter);
+router.use(aiRouter);
 
 export default router;

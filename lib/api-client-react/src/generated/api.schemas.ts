@@ -440,6 +440,35 @@ export interface AuditLog {
   timestamp: string;
 }
 
+export type GenerateCopyRequestTone = typeof GenerateCopyRequestTone[keyof typeof GenerateCopyRequestTone];
+
+
+export const GenerateCopyRequestTone = {
+  professional: 'professional',
+  bold: 'bold',
+  playful: 'playful',
+  urgent: 'urgent',
+  empathetic: 'empathetic',
+} as const;
+
+export interface GenerateCopyRequest {
+  campaignName: string;
+  clientName: string;
+  industry?: string;
+  impressions?: number;
+  ctr?: number;
+  leads?: number;
+  tone: GenerateCopyRequestTone;
+  additionalContext?: string;
+}
+
+export interface GenerateCopyResponse {
+  headlines: string[];
+  descriptions: string[];
+  ctas: string[];
+  insight: string;
+}
+
 export type ActivityEventType = typeof ActivityEventType[keyof typeof ActivityEventType];
 
 

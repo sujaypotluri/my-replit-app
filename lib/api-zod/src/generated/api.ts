@@ -568,6 +568,28 @@ export const GetAuditLogsResponse = zod.array(GetAuditLogsResponseItem)
 
 
 /**
+ * @summary Generate AI-powered campaign copy
+ */
+export const GenerateCampaignCopyBody = zod.object({
+  "campaignName": zod.string(),
+  "clientName": zod.string(),
+  "industry": zod.string().optional(),
+  "impressions": zod.number().optional(),
+  "ctr": zod.number().optional(),
+  "leads": zod.number().optional(),
+  "tone": zod.enum(['professional', 'bold', 'playful', 'urgent', 'empathetic']),
+  "additionalContext": zod.string().optional()
+})
+
+export const GenerateCampaignCopyResponse = zod.object({
+  "headlines": zod.array(zod.string()),
+  "descriptions": zod.array(zod.string()),
+  "ctas": zod.array(zod.string()),
+  "insight": zod.string()
+})
+
+
+/**
  * @summary Get live activity feed events
  */
 export const GetActivityFeedQueryParams = zod.object({

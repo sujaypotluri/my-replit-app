@@ -32,6 +32,8 @@ import type {
   DashboardStats,
   Department,
   DepartmentInput,
+  GenerateCopyRequest,
+  GenerateCopyResponse,
   GetActivityFeedParams,
   GetAnalyticsBreakdownParams,
   GetAnalyticsTrendsParams,
@@ -2207,6 +2209,77 @@ export function useGetAuditLogs<TData = Awaited<ReturnType<typeof getAuditLogs>>
 
 
 
+
+export const getGenerateCampaignCopyUrl = () => {
+
+
+
+
+  return `/api/ai/generate-copy`
+}
+
+/**
+ * @summary Generate AI-powered campaign copy
+ */
+export const generateCampaignCopy = async (generateCopyRequest: GenerateCopyRequest, options?: RequestInit): Promise<GenerateCopyResponse> => {
+
+  return customFetch<GenerateCopyResponse>(getGenerateCampaignCopyUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      generateCopyRequest,)
+  }
+);}
+
+
+
+
+export const getGenerateCampaignCopyMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof generateCampaignCopy>>, TError,{data: BodyType<GenerateCopyRequest>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof generateCampaignCopy>>, TError,{data: BodyType<GenerateCopyRequest>}, TContext> => {
+
+const mutationKey = ['generateCampaignCopy'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof generateCampaignCopy>>, {data: BodyType<GenerateCopyRequest>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  generateCampaignCopy(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GenerateCampaignCopyMutationResult = NonNullable<Awaited<ReturnType<typeof generateCampaignCopy>>>
+    export type GenerateCampaignCopyMutationBody = BodyType<GenerateCopyRequest>
+    export type GenerateCampaignCopyMutationError = ErrorType<void>
+
+    /**
+ * @summary Generate AI-powered campaign copy
+ */
+export const useGenerateCampaignCopy = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof generateCampaignCopy>>, TError,{data: BodyType<GenerateCopyRequest>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof generateCampaignCopy>>,
+        TError,
+        {data: BodyType<GenerateCopyRequest>},
+        TContext
+      > => {
+      return useMutation(getGenerateCampaignCopyMutationOptions(options));
+    }
 
 export const getGetActivityFeedUrl = (params?: GetActivityFeedParams,) => {
   const normalizedParams = new URLSearchParams();
