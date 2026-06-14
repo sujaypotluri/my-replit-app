@@ -25,6 +25,8 @@ tags:
     description: Activity feed
   - name: ai
     description: AI-powered content generation
+  - name: portal
+    description: SaaS client purchasing portal
 
 paths:
   /healthz:
@@ -629,6 +631,125 @@ paths:
         "500":
           description: AI generation error
 
+  # ── Portal ────────────────────────────────────────────────────────────────────
+  /portal/products:
+    get:
+      operationId: getPortalProducts
+      tags: [portal]
+      summary: List all available software products in the portal catalog
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: ["string", "null"]
+            enum: [platform, addon, support, null]
+      responses:
+        "200":
+          description: Product list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PortalProduct"
+
+  /portal/products/{id}:
+    get:
+      operationId: getPortalProduct
+      tags: [portal]
+      summary: Get a portal product by ID including all pricing tiers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Portal product with tiers
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PortalProduct"
+        "404":
+          description: Not found
+
+  /portal/plans:
+    get:
+      operationId: getPortalPlans
+      tags: [portal]
+      summary: Get all pricing plans with feature comparison
+      responses:
+        "200":
+          description: Pricing plans
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PricingPlan"
+
+  /portal/orders:
+    get:
+      operationId: getPortalOrders
+      tags: [portal]
+      summary: List all portal orders
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: ["string", "null"]
+            enum: [pending, confirmed, processing, fulfilled, cancelled, null]
+      responses:
+        "200":
+          description: Order list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PortalOrder"
+    post:
+      operationId: createPortalOrder
+      tags: [portal]
+      summary: Place a new order (checkout)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PortalOrderInput"
+      responses:
+        "201":
+          description: Created order with confirmation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PortalOrder"
+        "400":
+          description: Validation error
+
+  /portal/orders/{id}:
+    get:
+      operationId: getPortalOrder
+      tags: [portal]
+      summary: Get a portal order by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Portal order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PortalOrder"
+        "404":
+          description: Not found
+
   # ── Activity Feed ─────────────────────────────────────────────────────────────
   /activity-feed:
     get:
@@ -1127,6 +1248,191 @@ components:
           items:
             type: string
         insight:
+          type: string
+
+    # ── Portal Schemas ─────────────────────────────────────────────────────────
+    LicenseTier:
+      type: object
+      required: [id, name, pricePerSeat, minSeats, billingCycle]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        pricePerSeat:
+          type: number
+        minSeats:
+          type: integer
+        maxSeats:
+          type: ["integer", "null"]
+        billingCycle:
+          type: string
+          enum: [monthly, annual]
+        features:
+          type: array
+          items:
+            type: string
+        recommended:
+          type: ["boolean", "null"]
+        discount:
+          type: ["number", "null"]
+
+    PortalProduct:
+      type: object
+      required: [id, name, slug, category, shortDescription, description, tiers, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        category:
+          type: string
+          enum: [platform, addon, support]
+        shortDescription:
+          type: string
+        description:
+          type: string
+        highlights:
+          type: array
+          items:
+            type: string
+        tiers:
+          type: array
+          items:
+            $ref: "#/components/schemas/LicenseTier"
+        popular:
+          type: ["boolean", "null"]
+        badge:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    PricingPlan:
+      type: object
+      required: [id, name, slug, monthlyPrice, annualPrice, seatsIncluded, features]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        tagline:
+          type: ["string", "null"]
+        monthlyPrice:
+          type: number
+        annualPrice:
+          type: number
+        seatsIncluded:
+          type: integer
+        maxSeats:
+          type: ["integer", "null"]
+        features:
+          type: array
+          items:
+            type: string
+        highlighted:
+          type: ["boolean", "null"]
+        badge:
+          type: ["string", "null"]
+
+    PortalOrderItem:
+      type: object
+      required: [productId, productName, tierId, tierName, seats, unitPrice, total]
+      properties:
+        productId:
+          type: integer
+        productName:
+          type: string
+        tierId:
+          type: integer
+        tierName:
+          type: string
+        seats:
+          type: integer
+        unitPrice:
+          type: number
+        billingCycle:
+          type: string
+          enum: [monthly, annual]
+        total:
+          type: number
+
+    PortalBillingInfo:
+      type: object
+      required: [companyName, contactName, email]
+      properties:
+        companyName:
+          type: string
+        contactName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        city:
+          type: ["string", "null"]
+        country:
+          type: ["string", "null"]
+        vatNumber:
+          type: ["string", "null"]
+
+    PortalOrderInput:
+      type: object
+      required: [items, billing]
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            required: [productId, tierId, seats]
+            properties:
+              productId:
+                type: integer
+              tierId:
+                type: integer
+              seats:
+                type: integer
+              billingCycle:
+                type: string
+                enum: [monthly, annual]
+        billing:
+          $ref: "#/components/schemas/PortalBillingInfo"
+        notes:
+          type: ["string", "null"]
+
+    PortalOrder:
+      type: object
+      required: [id, orderNumber, status, items, billing, subtotal, total, createdAt]
+      properties:
+        id:
+          type: integer
+        orderNumber:
+          type: string
+        status:
+          type: string
+          enum: [pending, confirmed, processing, fulfilled, cancelled]
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/PortalOrderItem"
+        billing:
+          $ref: "#/components/schemas/PortalBillingInfo"
+        subtotal:
+          type: number
+        discount:
+          type: ["number", "null"]
+        total:
+          type: number
+        notes:
+          type: ["string", "null"]
+        estimatedDelivery:
+          type: ["string", "null"]
+        createdAt:
           type: string
 
     # ── Activity Feed Schemas ──────────────────────────────────────────────────

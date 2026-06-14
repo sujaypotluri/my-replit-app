@@ -469,6 +469,157 @@ export interface GenerateCopyResponse {
   insight: string;
 }
 
+export type LicenseTierBillingCycle = typeof LicenseTierBillingCycle[keyof typeof LicenseTierBillingCycle];
+
+
+export const LicenseTierBillingCycle = {
+  monthly: 'monthly',
+  annual: 'annual',
+} as const;
+
+export interface LicenseTier {
+  id: number;
+  name: string;
+  pricePerSeat: number;
+  minSeats: number;
+  /** @nullable */
+  maxSeats?: number | null;
+  billingCycle: LicenseTierBillingCycle;
+  features?: string[];
+  /** @nullable */
+  recommended?: boolean | null;
+  /** @nullable */
+  discount?: number | null;
+}
+
+export type PortalProductCategory = typeof PortalProductCategory[keyof typeof PortalProductCategory];
+
+
+export const PortalProductCategory = {
+  platform: 'platform',
+  addon: 'addon',
+  support: 'support',
+} as const;
+
+export interface PortalProduct {
+  id: number;
+  name: string;
+  slug: string;
+  category: PortalProductCategory;
+  shortDescription: string;
+  description: string;
+  highlights?: string[];
+  tiers: LicenseTier[];
+  /** @nullable */
+  popular?: boolean | null;
+  /** @nullable */
+  badge?: string | null;
+  createdAt: string;
+}
+
+export interface PricingPlan {
+  id: number;
+  name: string;
+  slug: string;
+  /** @nullable */
+  tagline?: string | null;
+  monthlyPrice: number;
+  annualPrice: number;
+  seatsIncluded: number;
+  /** @nullable */
+  maxSeats?: number | null;
+  features: string[];
+  /** @nullable */
+  highlighted?: boolean | null;
+  /** @nullable */
+  badge?: string | null;
+}
+
+export type PortalOrderItemBillingCycle = typeof PortalOrderItemBillingCycle[keyof typeof PortalOrderItemBillingCycle];
+
+
+export const PortalOrderItemBillingCycle = {
+  monthly: 'monthly',
+  annual: 'annual',
+} as const;
+
+export interface PortalOrderItem {
+  productId: number;
+  productName: string;
+  tierId: number;
+  tierName: string;
+  seats: number;
+  unitPrice: number;
+  billingCycle?: PortalOrderItemBillingCycle;
+  total: number;
+}
+
+export interface PortalBillingInfo {
+  companyName: string;
+  contactName: string;
+  email: string;
+  /** @nullable */
+  phone?: string | null;
+  /** @nullable */
+  address?: string | null;
+  /** @nullable */
+  city?: string | null;
+  /** @nullable */
+  country?: string | null;
+  /** @nullable */
+  vatNumber?: string | null;
+}
+
+export type PortalOrderInputItemsItemBillingCycle = typeof PortalOrderInputItemsItemBillingCycle[keyof typeof PortalOrderInputItemsItemBillingCycle];
+
+
+export const PortalOrderInputItemsItemBillingCycle = {
+  monthly: 'monthly',
+  annual: 'annual',
+} as const;
+
+export type PortalOrderInputItemsItem = {
+  productId: number;
+  tierId: number;
+  seats: number;
+  billingCycle?: PortalOrderInputItemsItemBillingCycle;
+};
+
+export interface PortalOrderInput {
+  items: PortalOrderInputItemsItem[];
+  billing: PortalBillingInfo;
+  /** @nullable */
+  notes?: string | null;
+}
+
+export type PortalOrderStatus = typeof PortalOrderStatus[keyof typeof PortalOrderStatus];
+
+
+export const PortalOrderStatus = {
+  pending: 'pending',
+  confirmed: 'confirmed',
+  processing: 'processing',
+  fulfilled: 'fulfilled',
+  cancelled: 'cancelled',
+} as const;
+
+export interface PortalOrder {
+  id: number;
+  orderNumber: string;
+  status: PortalOrderStatus;
+  items: PortalOrderItem[];
+  billing: PortalBillingInfo;
+  subtotal: number;
+  /** @nullable */
+  discount?: number | null;
+  total: number;
+  /** @nullable */
+  notes?: string | null;
+  /** @nullable */
+  estimatedDelivery?: string | null;
+  createdAt: string;
+}
+
 export type ActivityEventType = typeof ActivityEventType[keyof typeof ActivityEventType];
 
 
@@ -674,6 +825,40 @@ export const GetAuditLogsEntityType = {
   user: 'user',
   role: 'role',
   client: 'client',
+} as const;
+
+export type GetPortalProductsParams = {
+/**
+ * @nullable
+ */
+category?: GetPortalProductsCategory;
+};
+
+export type GetPortalProductsCategory = typeof GetPortalProductsCategory[keyof typeof GetPortalProductsCategory] | null;
+
+
+export const GetPortalProductsCategory = {
+  platform: 'platform',
+  addon: 'addon',
+  support: 'support',
+} as const;
+
+export type GetPortalOrdersParams = {
+/**
+ * @nullable
+ */
+status?: GetPortalOrdersStatus;
+};
+
+export type GetPortalOrdersStatus = typeof GetPortalOrdersStatus[keyof typeof GetPortalOrdersStatus] | null;
+
+
+export const GetPortalOrdersStatus = {
+  pending: 'pending',
+  confirmed: 'confirmed',
+  processing: 'processing',
+  fulfilled: 'fulfilled',
+  cancelled: 'cancelled',
 } as const;
 
 export type GetActivityFeedParams = {

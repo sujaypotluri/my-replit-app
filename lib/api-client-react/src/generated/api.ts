@@ -42,6 +42,8 @@ import type {
   GetDepartmentsParams,
   GetLicensePoolSummaryParams,
   GetLicensesParams,
+  GetPortalOrdersParams,
+  GetPortalProductsParams,
   GetSeatsParams,
   GetUsersParams,
   HealthStatus,
@@ -49,6 +51,10 @@ import type {
   LicenseInput,
   LicensePoolSummary,
   LicenseUpdate,
+  PortalOrder,
+  PortalOrderInput,
+  PortalProduct,
+  PricingPlan,
   Seat,
   SeatAssignInput,
   TrendPoint,
@@ -2280,6 +2286,476 @@ export const useGenerateCampaignCopy = <TError = ErrorType<void>,
       > => {
       return useMutation(getGenerateCampaignCopyMutationOptions(options));
     }
+
+export const getGetPortalProductsUrl = (params?: GetPortalProductsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/portal/products?${stringifiedParams}` : `/api/portal/products`
+}
+
+/**
+ * @summary List all available software products in the portal catalog
+ */
+export const getPortalProducts = async (params?: GetPortalProductsParams, options?: RequestInit): Promise<PortalProduct[]> => {
+
+  return customFetch<PortalProduct[]>(getGetPortalProductsUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetPortalProductsQueryKey = (params?: GetPortalProductsParams,) => {
+    return [
+    `/api/portal/products`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetPortalProductsQueryOptions = <TData = Awaited<ReturnType<typeof getPortalProducts>>, TError = ErrorType<unknown>>(params?: GetPortalProductsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPortalProducts>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetPortalProductsQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPortalProducts>>> = ({ signal }) => getPortalProducts(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPortalProducts>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetPortalProductsQueryResult = NonNullable<Awaited<ReturnType<typeof getPortalProducts>>>
+export type GetPortalProductsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List all available software products in the portal catalog
+ */
+
+export function useGetPortalProducts<TData = Awaited<ReturnType<typeof getPortalProducts>>, TError = ErrorType<unknown>>(
+ params?: GetPortalProductsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPortalProducts>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetPortalProductsQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+
+export const getGetPortalProductUrl = (id: number,) => {
+
+
+
+
+  return `/api/portal/products/${id}`
+}
+
+/**
+ * @summary Get a portal product by ID including all pricing tiers
+ */
+export const getPortalProduct = async (id: number, options?: RequestInit): Promise<PortalProduct> => {
+
+  return customFetch<PortalProduct>(getGetPortalProductUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetPortalProductQueryKey = (id: number,) => {
+    return [
+    `/api/portal/products/${id}`
+    ] as const;
+    }
+
+
+export const getGetPortalProductQueryOptions = <TData = Awaited<ReturnType<typeof getPortalProduct>>, TError = ErrorType<void>>(id: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPortalProduct>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetPortalProductQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPortalProduct>>> = ({ signal }) => getPortalProduct(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPortalProduct>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetPortalProductQueryResult = NonNullable<Awaited<ReturnType<typeof getPortalProduct>>>
+export type GetPortalProductQueryError = ErrorType<void>
+
+
+/**
+ * @summary Get a portal product by ID including all pricing tiers
+ */
+
+export function useGetPortalProduct<TData = Awaited<ReturnType<typeof getPortalProduct>>, TError = ErrorType<void>>(
+ id: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPortalProduct>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetPortalProductQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+
+export const getGetPortalPlansUrl = () => {
+
+
+
+
+  return `/api/portal/plans`
+}
+
+/**
+ * @summary Get all pricing plans with feature comparison
+ */
+export const getPortalPlans = async ( options?: RequestInit): Promise<PricingPlan[]> => {
+
+  return customFetch<PricingPlan[]>(getGetPortalPlansUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetPortalPlansQueryKey = () => {
+    return [
+    `/api/portal/plans`
+    ] as const;
+    }
+
+
+export const getGetPortalPlansQueryOptions = <TData = Awaited<ReturnType<typeof getPortalPlans>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPortalPlans>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetPortalPlansQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPortalPlans>>> = ({ signal }) => getPortalPlans({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPortalPlans>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetPortalPlansQueryResult = NonNullable<Awaited<ReturnType<typeof getPortalPlans>>>
+export type GetPortalPlansQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get all pricing plans with feature comparison
+ */
+
+export function useGetPortalPlans<TData = Awaited<ReturnType<typeof getPortalPlans>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPortalPlans>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetPortalPlansQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+
+export const getGetPortalOrdersUrl = (params?: GetPortalOrdersParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/portal/orders?${stringifiedParams}` : `/api/portal/orders`
+}
+
+/**
+ * @summary List all portal orders
+ */
+export const getPortalOrders = async (params?: GetPortalOrdersParams, options?: RequestInit): Promise<PortalOrder[]> => {
+
+  return customFetch<PortalOrder[]>(getGetPortalOrdersUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetPortalOrdersQueryKey = (params?: GetPortalOrdersParams,) => {
+    return [
+    `/api/portal/orders`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetPortalOrdersQueryOptions = <TData = Awaited<ReturnType<typeof getPortalOrders>>, TError = ErrorType<unknown>>(params?: GetPortalOrdersParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPortalOrders>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetPortalOrdersQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPortalOrders>>> = ({ signal }) => getPortalOrders(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPortalOrders>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetPortalOrdersQueryResult = NonNullable<Awaited<ReturnType<typeof getPortalOrders>>>
+export type GetPortalOrdersQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List all portal orders
+ */
+
+export function useGetPortalOrders<TData = Awaited<ReturnType<typeof getPortalOrders>>, TError = ErrorType<unknown>>(
+ params?: GetPortalOrdersParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPortalOrders>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetPortalOrdersQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+
+export const getCreatePortalOrderUrl = () => {
+
+
+
+
+  return `/api/portal/orders`
+}
+
+/**
+ * @summary Place a new order (checkout)
+ */
+export const createPortalOrder = async (portalOrderInput: PortalOrderInput, options?: RequestInit): Promise<PortalOrder> => {
+
+  return customFetch<PortalOrder>(getCreatePortalOrderUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      portalOrderInput,)
+  }
+);}
+
+
+
+
+export const getCreatePortalOrderMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPortalOrder>>, TError,{data: BodyType<PortalOrderInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createPortalOrder>>, TError,{data: BodyType<PortalOrderInput>}, TContext> => {
+
+const mutationKey = ['createPortalOrder'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createPortalOrder>>, {data: BodyType<PortalOrderInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createPortalOrder(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreatePortalOrderMutationResult = NonNullable<Awaited<ReturnType<typeof createPortalOrder>>>
+    export type CreatePortalOrderMutationBody = BodyType<PortalOrderInput>
+    export type CreatePortalOrderMutationError = ErrorType<void>
+
+    /**
+ * @summary Place a new order (checkout)
+ */
+export const useCreatePortalOrder = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPortalOrder>>, TError,{data: BodyType<PortalOrderInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createPortalOrder>>,
+        TError,
+        {data: BodyType<PortalOrderInput>},
+        TContext
+      > => {
+      return useMutation(getCreatePortalOrderMutationOptions(options));
+    }
+
+export const getGetPortalOrderUrl = (id: number,) => {
+
+
+
+
+  return `/api/portal/orders/${id}`
+}
+
+/**
+ * @summary Get a portal order by ID
+ */
+export const getPortalOrder = async (id: number, options?: RequestInit): Promise<PortalOrder> => {
+
+  return customFetch<PortalOrder>(getGetPortalOrderUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetPortalOrderQueryKey = (id: number,) => {
+    return [
+    `/api/portal/orders/${id}`
+    ] as const;
+    }
+
+
+export const getGetPortalOrderQueryOptions = <TData = Awaited<ReturnType<typeof getPortalOrder>>, TError = ErrorType<void>>(id: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPortalOrder>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetPortalOrderQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPortalOrder>>> = ({ signal }) => getPortalOrder(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPortalOrder>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetPortalOrderQueryResult = NonNullable<Awaited<ReturnType<typeof getPortalOrder>>>
+export type GetPortalOrderQueryError = ErrorType<void>
+
+
+/**
+ * @summary Get a portal order by ID
+ */
+
+export function useGetPortalOrder<TData = Awaited<ReturnType<typeof getPortalOrder>>, TError = ErrorType<void>>(
+ id: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPortalOrder>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetPortalOrderQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
 
 export const getGetActivityFeedUrl = (params?: GetActivityFeedParams,) => {
   const normalizedParams = new URLSearchParams();

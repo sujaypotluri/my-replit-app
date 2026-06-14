@@ -590,6 +590,195 @@ export const GenerateCampaignCopyResponse = zod.object({
 
 
 /**
+ * @summary List all available software products in the portal catalog
+ */
+export const GetPortalProductsQueryParams = zod.object({
+  "category": zod.union([zod.literal('platform'),zod.literal('addon'),zod.literal('support'),zod.literal(null)]).nullish()
+})
+
+export const GetPortalProductsResponseItem = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "slug": zod.string(),
+  "category": zod.enum(['platform', 'addon', 'support']),
+  "shortDescription": zod.string(),
+  "description": zod.string(),
+  "highlights": zod.array(zod.string()).optional(),
+  "tiers": zod.array(zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "pricePerSeat": zod.number(),
+  "minSeats": zod.number(),
+  "maxSeats": zod.number().nullish(),
+  "billingCycle": zod.enum(['monthly', 'annual']),
+  "features": zod.array(zod.string()).optional(),
+  "recommended": zod.boolean().nullish(),
+  "discount": zod.number().nullish()
+})),
+  "popular": zod.boolean().nullish(),
+  "badge": zod.string().nullish(),
+  "createdAt": zod.string()
+})
+export const GetPortalProductsResponse = zod.array(GetPortalProductsResponseItem)
+
+
+/**
+ * @summary Get a portal product by ID including all pricing tiers
+ */
+export const GetPortalProductParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const GetPortalProductResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "slug": zod.string(),
+  "category": zod.enum(['platform', 'addon', 'support']),
+  "shortDescription": zod.string(),
+  "description": zod.string(),
+  "highlights": zod.array(zod.string()).optional(),
+  "tiers": zod.array(zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "pricePerSeat": zod.number(),
+  "minSeats": zod.number(),
+  "maxSeats": zod.number().nullish(),
+  "billingCycle": zod.enum(['monthly', 'annual']),
+  "features": zod.array(zod.string()).optional(),
+  "recommended": zod.boolean().nullish(),
+  "discount": zod.number().nullish()
+})),
+  "popular": zod.boolean().nullish(),
+  "badge": zod.string().nullish(),
+  "createdAt": zod.string()
+})
+
+
+/**
+ * @summary Get all pricing plans with feature comparison
+ */
+export const GetPortalPlansResponseItem = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "slug": zod.string(),
+  "tagline": zod.string().nullish(),
+  "monthlyPrice": zod.number(),
+  "annualPrice": zod.number(),
+  "seatsIncluded": zod.number(),
+  "maxSeats": zod.number().nullish(),
+  "features": zod.array(zod.string()),
+  "highlighted": zod.boolean().nullish(),
+  "badge": zod.string().nullish()
+})
+export const GetPortalPlansResponse = zod.array(GetPortalPlansResponseItem)
+
+
+/**
+ * @summary List all portal orders
+ */
+export const GetPortalOrdersQueryParams = zod.object({
+  "status": zod.union([zod.literal('pending'),zod.literal('confirmed'),zod.literal('processing'),zod.literal('fulfilled'),zod.literal('cancelled'),zod.literal(null)]).nullish()
+})
+
+export const GetPortalOrdersResponseItem = zod.object({
+  "id": zod.number(),
+  "orderNumber": zod.string(),
+  "status": zod.enum(['pending', 'confirmed', 'processing', 'fulfilled', 'cancelled']),
+  "items": zod.array(zod.object({
+  "productId": zod.number(),
+  "productName": zod.string(),
+  "tierId": zod.number(),
+  "tierName": zod.string(),
+  "seats": zod.number(),
+  "unitPrice": zod.number(),
+  "billingCycle": zod.enum(['monthly', 'annual']).optional(),
+  "total": zod.number()
+})),
+  "billing": zod.object({
+  "companyName": zod.string(),
+  "contactName": zod.string(),
+  "email": zod.string(),
+  "phone": zod.string().nullish(),
+  "address": zod.string().nullish(),
+  "city": zod.string().nullish(),
+  "country": zod.string().nullish(),
+  "vatNumber": zod.string().nullish()
+}),
+  "subtotal": zod.number(),
+  "discount": zod.number().nullish(),
+  "total": zod.number(),
+  "notes": zod.string().nullish(),
+  "estimatedDelivery": zod.string().nullish(),
+  "createdAt": zod.string()
+})
+export const GetPortalOrdersResponse = zod.array(GetPortalOrdersResponseItem)
+
+
+/**
+ * @summary Place a new order (checkout)
+ */
+export const CreatePortalOrderBody = zod.object({
+  "items": zod.array(zod.object({
+  "productId": zod.number(),
+  "tierId": zod.number(),
+  "seats": zod.number(),
+  "billingCycle": zod.enum(['monthly', 'annual']).optional()
+})),
+  "billing": zod.object({
+  "companyName": zod.string(),
+  "contactName": zod.string(),
+  "email": zod.string(),
+  "phone": zod.string().nullish(),
+  "address": zod.string().nullish(),
+  "city": zod.string().nullish(),
+  "country": zod.string().nullish(),
+  "vatNumber": zod.string().nullish()
+}),
+  "notes": zod.string().nullish()
+})
+
+
+/**
+ * @summary Get a portal order by ID
+ */
+export const GetPortalOrderParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const GetPortalOrderResponse = zod.object({
+  "id": zod.number(),
+  "orderNumber": zod.string(),
+  "status": zod.enum(['pending', 'confirmed', 'processing', 'fulfilled', 'cancelled']),
+  "items": zod.array(zod.object({
+  "productId": zod.number(),
+  "productName": zod.string(),
+  "tierId": zod.number(),
+  "tierName": zod.string(),
+  "seats": zod.number(),
+  "unitPrice": zod.number(),
+  "billingCycle": zod.enum(['monthly', 'annual']).optional(),
+  "total": zod.number()
+})),
+  "billing": zod.object({
+  "companyName": zod.string(),
+  "contactName": zod.string(),
+  "email": zod.string(),
+  "phone": zod.string().nullish(),
+  "address": zod.string().nullish(),
+  "city": zod.string().nullish(),
+  "country": zod.string().nullish(),
+  "vatNumber": zod.string().nullish()
+}),
+  "subtotal": zod.number(),
+  "discount": zod.number().nullish(),
+  "total": zod.number(),
+  "notes": zod.string().nullish(),
+  "estimatedDelivery": zod.string().nullish(),
+  "createdAt": zod.string()
+})
+
+
+/**
  * @summary Get live activity feed events
  */
 export const GetActivityFeedQueryParams = zod.object({

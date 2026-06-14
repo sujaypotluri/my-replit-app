@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/store/"
+title = "SaaS Client Portal"
+version = "1.0.0"
+id = "artifacts/saas-portal"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/store/" ]
+localPort = 23091
+
+[services.development]
+run = "pnpm --filter @workspace/saas-portal run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/saas-portal", "run", "build" ]
+publicDir = "artifacts/saas-portal/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23091"
+BASE_PATH = "/store/"

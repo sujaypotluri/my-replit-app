@@ -6,3 +6,6 @@ export * from "./seats";
 export * from "./campaigns";
 export * from "./audit_logs";
 export * from "./activity_events";
+export * from "./portal_products";
+export * from "./portal_plans";
+export * from "./portal_orders";
