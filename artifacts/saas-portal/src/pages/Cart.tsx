@@ -12,12 +12,14 @@ export default function Cart() {
 
   if (items.length === 0) {
     return (
-      <div className="container mx-auto max-w-2xl px-4 py-20 text-center">
-        <ShoppingCart className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-        <h2 className="text-xl font-semibold mb-2">Your cart is empty</h2>
-        <p className="text-muted-foreground mb-6">Browse our catalog and add products to get started.</p>
+      <div className="container mx-auto max-w-2xl px-4 py-24 text-center">
+        <div className="w-16 h-16 rounded-2xl border border-primary/20 bg-primary/5 flex items-center justify-center mx-auto mb-5 neon-glow">
+          <ShoppingCart className="w-7 h-7 text-primary" />
+        </div>
+        <h2 className="text-2xl font-bold mb-2">Your cart is empty</h2>
+        <p className="text-muted-foreground mb-7">Browse our catalog and add products to get started.</p>
         <Link href="/">
-          <Button data-testid="button-browse-catalog">Browse Catalog</Button>
+          <Button className="neon-glow" data-testid="button-browse-catalog">Browse Catalog</Button>
         </Link>
       </div>
     );
@@ -25,48 +27,52 @@ export default function Cart() {
 
   return (
     <div className="container mx-auto max-w-5xl px-4 py-10">
-      <h1 className="text-2xl font-bold mb-6">Your Cart</h1>
+      <h1 className="text-2xl font-bold mb-7">Your Cart</h1>
       <div className="grid md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-4">
           {items.map((item) => {
             const itemTotal = item.pricePerSeat * item.seats;
             return (
-              <Card key={`${item.productId}-${item.tierId}`} data-testid={`cart-item-${item.productId}-${item.tierId}`}>
-                <CardHeader className="pb-2">
+              <Card
+                key={`${item.productId}-${item.tierId}`}
+                className="neon-card"
+                data-testid={`cart-item-${item.productId}-${item.tierId}`}
+              >
+                <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <h3 className="font-medium">{item.productName}</h3>
-                      <div className="flex items-center gap-2 mt-1 flex-wrap">
+                      <h3 className="font-semibold">{item.productName}</h3>
+                      <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                         <Badge variant="secondary" className="text-xs">{item.tierName}</Badge>
-                        <Badge variant="outline" className="text-xs">{item.billingCycle}</Badge>
+                        <Badge variant="outline" className="text-xs border-border/60 capitalize">{item.billingCycle}</Badge>
                       </div>
                     </div>
                     <button
                       onClick={() => removeItem(item.productId, item.tierId)}
-                      className="text-muted-foreground hover:text-destructive transition-colors"
+                      className="text-muted-foreground hover:text-destructive transition-colors p-1"
                       data-testid={`button-remove-${item.productId}-${item.tierId}`}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </CardHeader>
-                <CardContent className="pb-2">
+                <CardContent className="pb-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <button
                         onClick={() => updateSeats(item.productId, item.tierId, Math.max(1, item.seats - 1))}
-                        className="w-7 h-7 rounded-md border flex items-center justify-center hover:bg-muted transition-colors"
+                        className="w-7 h-7 rounded-md border border-border/60 flex items-center justify-center hover:border-primary/50 hover:text-primary transition-all"
                         data-testid={`button-decrease-seats-${item.productId}`}
                       ><Minus className="w-3 h-3" /></button>
-                      <span className="text-sm font-medium w-12 text-center" data-testid={`seats-count-${item.productId}`}>{item.seats} seats</span>
+                      <span className="text-sm font-medium w-14 text-center" data-testid={`seats-count-${item.productId}`}>{item.seats} seats</span>
                       <button
                         onClick={() => updateSeats(item.productId, item.tierId, item.seats + 1)}
-                        className="w-7 h-7 rounded-md border flex items-center justify-center hover:bg-muted transition-colors"
+                        className="w-7 h-7 rounded-md border border-border/60 flex items-center justify-center hover:border-primary/50 hover:text-primary transition-all"
                         data-testid={`button-increase-seats-${item.productId}`}
                       ><Plus className="w-3 h-3" /></button>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold">${itemTotal.toFixed(2)}<span className="text-muted-foreground text-xs font-normal">/mo</span></p>
+                      <p className="neon-text font-bold">${itemTotal.toFixed(2)}<span className="text-muted-foreground text-xs font-normal">/mo</span></p>
                       <p className="text-xs text-muted-foreground">${item.pricePerSeat}/seat</p>
                     </div>
                   </div>
@@ -77,8 +83,8 @@ export default function Cart() {
         </div>
 
         <div>
-          <Card className="sticky top-24">
-            <CardHeader className="border-b pb-4">
+          <Card className="sticky top-24 neon-card">
+            <CardHeader className="border-b border-border/60 pb-4">
               <h3 className="font-semibold">Order Summary</h3>
             </CardHeader>
             <CardContent className="space-y-3 pt-4">
@@ -88,22 +94,24 @@ export default function Cart() {
                   <span className="shrink-0">${(item.pricePerSeat * item.seats).toFixed(2)}</span>
                 </div>
               ))}
-              <Separator />
+              <Separator className="bg-border/60" />
               <div className="flex justify-between font-semibold">
                 <span>Total / month</span>
-                <span>${cartTotal.toFixed(2)}</span>
+                <span className="neon-text">${cartTotal.toFixed(2)}</span>
               </div>
             </CardContent>
-            <CardFooter className="border-t pt-4 flex-col gap-3">
+            <CardFooter className="border-t border-border/60 pt-4 flex-col gap-3">
               <Button
-                className="w-full"
+                className="w-full neon-glow"
                 onClick={() => setLocation("/checkout")}
                 data-testid="button-proceed-checkout"
               >
                 Proceed to Checkout <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
               <Link href="/" className="w-full">
-                <Button variant="outline" className="w-full" data-testid="button-continue-shopping">Continue Shopping</Button>
+                <Button variant="outline" className="w-full border-border/60 hover:border-primary/50 transition-all" data-testid="button-continue-shopping">
+                  Continue Shopping
+                </Button>
               </Link>
             </CardFooter>
           </Card>

@@ -9,7 +9,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Lock } from "lucide-react";
 import { useCart } from "@/context/cart-context";
 import { useToast } from "@/hooks/use-toast";
@@ -51,7 +50,7 @@ export default function Checkout() {
     return (
       <div className="container mx-auto max-w-2xl px-4 py-20 text-center">
         <p className="text-muted-foreground mb-4">Your cart is empty.</p>
-        <Button onClick={() => setLocation("/")} data-testid="button-browse">Browse Catalog</Button>
+        <Button className="neon-glow" onClick={() => setLocation("/")} data-testid="button-browse">Browse Catalog</Button>
       </div>
     );
   }
@@ -100,12 +99,12 @@ export default function Checkout() {
         <ArrowLeft className="w-4 h-4" /> Back to cart
       </button>
 
-      <h1 className="text-2xl font-bold mb-6">Checkout</h1>
+      <h1 className="text-2xl font-bold mb-7">Checkout</h1>
 
       <div className="grid md:grid-cols-3 gap-8">
         <div className="md:col-span-2">
-          <Card>
-            <CardHeader className="border-b pb-4">
+          <Card className="neon-card">
+            <CardHeader className="border-b border-border/60 pb-4">
               <h2 className="font-semibold">Billing Information</h2>
             </CardHeader>
             <CardContent className="pt-5">
@@ -201,10 +200,10 @@ export default function Checkout() {
                     )}
                   />
 
-                  <div className="pt-2">
+                  <div className="pt-3">
                     <Button
                       type="submit"
-                      className="w-full"
+                      className="w-full neon-glow"
                       disabled={createOrder.isPending}
                       data-testid="button-place-order"
                     >
@@ -222,8 +221,8 @@ export default function Checkout() {
         </div>
 
         <div>
-          <Card className="sticky top-24">
-            <CardHeader className="border-b pb-4">
+          <Card className="sticky top-24 neon-card">
+            <CardHeader className="border-b border-border/60 pb-4">
               <h3 className="font-semibold">Order Summary</h3>
             </CardHeader>
             <CardContent className="space-y-3 pt-4">
@@ -239,10 +238,10 @@ export default function Checkout() {
                   <span className="shrink-0 font-medium">${(item.pricePerSeat * item.seats).toFixed(2)}/mo</span>
                 </div>
               ))}
-              <Separator />
+              <Separator className="bg-border/60" />
               <div className="flex justify-between font-semibold">
                 <span>Total / month</span>
-                <span data-testid="text-order-total">${cartTotal.toFixed(2)}</span>
+                <span className="neon-text" data-testid="text-order-total">${cartTotal.toFixed(2)}</span>
               </div>
             </CardContent>
           </Card>

@@ -80,19 +80,23 @@ export default function ProductDetail() {
       <div className="grid md:grid-cols-5 gap-8">
         <div className="md:col-span-3 space-y-6">
           <div>
-            <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <Badge variant="secondary">{product.category}</Badge>
-              {product.badge && <Badge>{product.badge}</Badge>}
-              {product.popular && <Badge variant="outline"><Star className="w-3 h-3 mr-1" />Popular</Badge>}
+            <div className="flex items-center gap-2 mb-3 flex-wrap">
+              <Badge variant="secondary" className="capitalize">{product.category}</Badge>
+              {product.badge && <Badge className="neon-glow">{product.badge}</Badge>}
+              {product.popular && (
+                <Badge variant="outline" className="border-primary/40 text-primary">
+                  <Star className="w-3 h-3 mr-1" />Popular
+                </Badge>
+              )}
             </div>
-            <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
+            <h1 className="text-3xl font-bold mb-3">{product.name}</h1>
             <p className="text-muted-foreground leading-relaxed">{product.description}</p>
           </div>
 
           {product.highlights && product.highlights.length > 0 && (
             <div>
               <h3 className="font-semibold mb-3">Highlights</h3>
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {product.highlights.map((h, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm">
                     <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />{h}
@@ -109,17 +113,20 @@ export default function ProductDetail() {
                 {product.tiers.map((t) => (
                   <Card
                     key={t.id}
-                    className={`cursor-pointer transition-all border ${tier?.id === t.id ? "border-primary ring-2 ring-primary" : "hover:border-primary/50"}`}
+                    className={`cursor-pointer transition-all ${tier?.id === t.id ? "neon-border neon-card" : "neon-card hover:border-primary/40"}`}
                     onClick={() => { setSelectedTier(t); setSeats(Math.max(t.minSeats, seats)); }}
                     data-testid={`card-tier-${t.id}`}
                   >
                     <CardHeader className="py-3 px-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
+                          <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${tier?.id === t.id ? "border-primary bg-primary neon-glow" : "border-muted-foreground"}`}>
+                            {tier?.id === t.id && <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />}
+                          </div>
                           <span className="font-medium text-sm">{t.name}</span>
-                          {t.recommended && <Badge className="text-xs">Recommended</Badge>}
+                          {t.recommended && <Badge className="text-xs neon-glow">Recommended</Badge>}
                         </div>
-                        <span className="text-sm font-semibold">${t.pricePerSeat}/seat/mo</span>
+                        <span className={`text-sm font-semibold ${tier?.id === t.id ? "neon-text" : ""}`}>${t.pricePerSeat}/seat/mo</span>
                       </div>
                     </CardHeader>
                     {t.features && t.features.length > 0 && (
@@ -141,11 +148,11 @@ export default function ProductDetail() {
         </div>
 
         <div className="md:col-span-2">
-          <Card className="sticky top-24">
-            <CardHeader className="border-b pb-4">
+          <Card className="sticky top-24 neon-card">
+            <CardHeader className="border-b border-border/60 pb-4">
               <h3 className="font-semibold">Configure your purchase</h3>
             </CardHeader>
-            <CardContent className="space-y-5 pt-4">
+            <CardContent className="space-y-5 pt-5">
               <div>
                 <label className="text-sm font-medium">Billing cycle</label>
                 <div className="flex gap-2 mt-2">
@@ -153,7 +160,7 @@ export default function ProductDetail() {
                     <button
                       key={c}
                       onClick={() => setBillingCycle(c)}
-                      className={`flex-1 py-2 px-3 rounded-md border text-sm font-medium transition-colors ${billingCycle === c ? "border-primary bg-primary/5 text-primary" : "text-muted-foreground hover:text-foreground"}`}
+                      className={`flex-1 py-2 px-3 rounded-md border text-sm font-medium transition-all ${billingCycle === c ? "border-primary bg-primary/10 text-primary neon-border" : "border-border/60 text-muted-foreground hover:text-foreground hover:border-primary/40"}`}
                       data-testid={`billing-${c}`}
                     >
                       {c === "annual" ? "Annual (save 17%)" : "Monthly"}
@@ -171,7 +178,7 @@ export default function ProductDetail() {
                     max={maxSeats}
                     value={seats}
                     onChange={(e) => setSeats(Math.max(minSeats, Math.min(maxSeats, parseInt(e.target.value, 10) || minSeats)))}
-                    className="w-16 text-right border rounded-md px-2 py-1 text-sm bg-background"
+                    className="w-16 text-right border border-border/60 rounded-md px-2 py-1 text-sm bg-background focus:border-primary focus:outline-none transition-colors"
                     data-testid="input-seats"
                   />
                 </div>
@@ -183,13 +190,13 @@ export default function ProductDetail() {
                   onValueChange={(v) => setSeats(v[0])}
                   data-testid="slider-seats"
                 />
-                <p className="text-xs text-muted-foreground mt-1">Min {minSeats}{maxSeats ? ` · Max ${maxSeats}` : ""} seats</p>
+                <p className="text-xs text-muted-foreground mt-1.5">Min {minSeats}{maxSeats ? ` · Max ${maxSeats}` : ""} seats</p>
               </div>
 
-              <div className="border-t pt-4 space-y-1">
+              <div className="border-t border-border/60 pt-4 space-y-1.5">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">{seats} seats × ${pricePerSeat}/mo</span>
-                  <span>${total.toFixed(2)}/mo</span>
+                  <span className="neon-text font-semibold">${total.toFixed(2)}/mo</span>
                 </div>
                 {billingCycle === "annual" && (
                   <div className="flex justify-between text-sm text-muted-foreground">
@@ -200,7 +207,7 @@ export default function ProductDetail() {
               </div>
 
               <Button
-                className="w-full"
+                className="w-full neon-glow"
                 onClick={handleAddToCart}
                 data-testid="button-add-to-cart"
                 disabled={!tier}

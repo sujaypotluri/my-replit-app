@@ -26,29 +26,42 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
-      <section className="bg-primary text-primary-foreground py-20 px-4">
-        <div className="container mx-auto max-w-4xl text-center">
-          <div className="inline-flex items-center gap-2 bg-primary-foreground/10 border border-primary-foreground/20 rounded-full px-4 py-1.5 mb-6">
+      {/* Hero */}
+      <section className="relative overflow-hidden py-24 px-4 bg-card">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-primary/10 rounded-full blur-3xl" />
+          <div className="absolute top-1/3 right-1/4 w-[200px] h-[200px] bg-accent/10 rounded-full blur-3xl" />
+        </div>
+        <div className="container mx-auto max-w-4xl text-center relative z-10">
+          <div className="inline-flex items-center gap-2 border border-primary/30 rounded-full px-4 py-1.5 mb-6 bg-primary/5 text-primary text-sm font-medium neon-border">
             <Zap className="w-3.5 h-3.5" />
-            <span className="text-sm font-medium">Enterprise AI Marketing Platform</span>
+            Enterprise AI Marketing Platform
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 leading-tight">
-            Scale your marketing with<br />AI-powered precision
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-5 leading-tight">
+            Scale your marketing<br />
+            <span className="neon-text">with AI precision</span>
           </h1>
-          <p className="text-lg text-primary-foreground/70 mb-8 max-w-2xl mx-auto">
-            Give your teams the tools they need to run high-impact campaigns at scale. Choose the plan that fits your organization.
+          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+            Give your teams the tools they need to run high-impact campaigns at scale.
+            Choose the plan that fits your organization.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link href="/plans">
-              <Button variant="secondary" size="lg" data-testid="button-view-pricing">
+              <Button size="lg" className="neon-glow font-semibold" data-testid="button-view-pricing">
                 View Pricing Plans <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+            <Link href="/">
+              <Button size="lg" variant="outline" className="border-primary/40 hover:border-primary hover:neon-glow transition-all" data-testid="button-view-catalog">
+                Browse Catalog
               </Button>
             </Link>
           </div>
         </div>
       </section>
 
-      <section className="border-b bg-muted/30 py-6">
+      {/* Trust bar */}
+      <section className="border-y border-border/60 py-5 bg-background">
         <div className="container mx-auto px-4 md:px-8">
           <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
             <div className="flex items-center gap-2"><Shield className="w-4 h-4 text-primary" /><span>SOC 2 Type II Certified</span></div>
@@ -59,7 +72,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-12 px-4">
+      {/* Product catalog */}
+      <section className="py-14 px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
@@ -73,6 +87,7 @@ export default function Home() {
                   variant={category === cat ? "default" : "outline"}
                   size="sm"
                   onClick={() => setCategory(cat)}
+                  className={category === cat ? "neon-glow" : "border-border/60 hover:border-primary/50 transition-all"}
                   data-testid={`filter-${cat}`}
                 >
                   {cat === "all" ? "All Products" : CATEGORY_LABELS[cat]}
@@ -82,9 +97,9 @@ export default function Home() {
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {[...Array(6)].map((_, i) => (
-                <Card key={i} className="flex flex-col">
+                <Card key={i} className="flex flex-col neon-card">
                   <CardHeader className="pb-3"><Skeleton className="h-6 w-2/3" /><Skeleton className="h-4 w-full mt-2" /></CardHeader>
                   <CardContent className="flex-1"><Skeleton className="h-16 w-full" /></CardContent>
                   <CardFooter><Skeleton className="h-9 w-full" /></CardFooter>
@@ -92,7 +107,7 @@ export default function Home() {
               ))}
             </div>
           ) : allProducts && allProducts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {allProducts.map((product) => {
                 const startingPrice = product.tiers.length > 0
                   ? Math.min(...product.tiers.map((t) => t.pricePerSeat))
@@ -100,45 +115,45 @@ export default function Home() {
                 return (
                   <Card
                     key={product.id}
-                    className="flex flex-col hover:shadow-md transition-shadow border"
+                    className="flex flex-col neon-card hover:border-primary/50 transition-all"
                     data-testid={`card-product-${product.id}`}
                   >
                     <CardHeader className="pb-3">
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
                             <Badge variant="secondary" className="text-xs">{CATEGORY_LABELS[product.category] ?? product.category}</Badge>
-                            {product.badge && <Badge variant="default" className="text-xs">{product.badge}</Badge>}
+                            {product.badge && <Badge className="text-xs neon-glow">{product.badge}</Badge>}
                           </div>
                           <h3 className="font-semibold text-base leading-tight">{product.name}</h3>
                         </div>
                         {product.popular && (
-                          <Badge className="shrink-0">Popular</Badge>
+                          <Badge className="shrink-0 neon-glow">Popular</Badge>
                         )}
                       </div>
                       <p className="text-sm text-muted-foreground leading-relaxed">{product.shortDescription}</p>
                     </CardHeader>
                     <CardContent className="flex-1 pb-3">
                       {product.highlights && product.highlights.length > 0 && (
-                        <ul className="space-y-1">
+                        <ul className="space-y-1.5">
                           {product.highlights.slice(0, 3).map((h, i) => (
-                            <li key={i} className="text-sm text-muted-foreground flex items-start gap-1.5">
-                              <span className="text-primary mt-0.5">•</span>{h}
+                            <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+                              <span className="text-primary mt-0.5 shrink-0">›</span>{h}
                             </li>
                           ))}
                         </ul>
                       )}
                     </CardContent>
-                    <CardFooter className="flex items-center justify-between pt-3 border-t">
+                    <CardFooter className="flex items-center justify-between pt-3 border-t border-border/60">
                       {startingPrice != null ? (
                         <span className="text-sm text-muted-foreground">
-                          From <span className="text-foreground font-semibold">${startingPrice}</span>/seat/mo
+                          From <span className="neon-text font-bold">${startingPrice}</span><span className="text-xs">/seat/mo</span>
                         </span>
                       ) : (
                         <span className="text-sm text-muted-foreground">Contact sales</span>
                       )}
                       <Link href={`/products/${product.id}`}>
-                        <Button size="sm" variant="outline" data-testid={`button-view-product-${product.id}`}>
+                        <Button size="sm" variant="outline" className="border-primary/30 hover:border-primary hover:neon-glow transition-all" data-testid={`button-view-product-${product.id}`}>
                           View <ArrowRight className="w-3.5 h-3.5 ml-1" />
                         </Button>
                       </Link>

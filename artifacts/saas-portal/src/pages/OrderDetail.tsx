@@ -7,12 +7,12 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, CheckCircle, Package, Calendar, Building2 } from "lucide-react";
 
-const STATUS_VARIANT: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
-  confirmed: "default",
-  processing: "secondary",
-  fulfilled: "secondary",
-  pending: "outline",
-  cancelled: "destructive",
+const STATUS_STYLES: Record<string, string> = {
+  confirmed: "bg-primary/15 text-primary border border-primary/30",
+  processing: "bg-accent/15 text-accent-foreground border border-accent/30",
+  fulfilled: "bg-chart-4/15 text-foreground border border-chart-4/30",
+  pending: "bg-muted text-muted-foreground border border-border",
+  cancelled: "bg-destructive/15 text-destructive border border-destructive/30",
 };
 
 export default function OrderDetail() {
@@ -56,54 +56,54 @@ export default function OrderDetail() {
       </button>
 
       {isConfirmation && (
-        <div className="flex items-center gap-3 bg-primary/5 border border-primary/20 rounded-lg px-4 py-3 mb-6">
+        <div className="flex items-center gap-3 bg-primary/8 border border-primary/25 rounded-xl px-4 py-4 mb-7 neon-glow">
           <CheckCircle className="w-5 h-5 text-primary shrink-0" />
           <div>
-            <p className="font-semibold text-sm">Order confirmed</p>
-            <p className="text-xs text-muted-foreground">We'll reach out to {order.billing.email} with next steps.</p>
+            <p className="font-semibold text-sm">Order confirmed!</p>
+            <p className="text-xs text-muted-foreground mt-0.5">We'll reach out to <span className="text-foreground">{order.billing.email}</span> with next steps.</p>
           </div>
         </div>
       )}
 
-      <div className="flex items-start justify-between gap-4 mb-6">
+      <div className="flex items-start justify-between gap-4 mb-7">
         <div>
-          <h1 className="text-xl font-bold" data-testid="text-order-number">{order.orderNumber}</h1>
+          <h1 className="text-2xl font-bold neon-text" data-testid="text-order-number">{order.orderNumber}</h1>
           <p className="text-sm text-muted-foreground mt-1">Placed {new Date(order.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
         </div>
-        <Badge variant={STATUS_VARIANT[order.status] ?? "outline"} className="text-sm px-3 py-1" data-testid="badge-status">
+        <span className={`text-sm px-3 py-1.5 rounded-full font-medium ${STATUS_STYLES[order.status] ?? STATUS_STYLES.pending}`} data-testid="badge-status">
           {order.status}
-        </Badge>
+        </span>
       </div>
 
       <div className="space-y-4">
-        <Card>
-          <CardHeader className="border-b pb-3">
+        <Card className="neon-card">
+          <CardHeader className="border-b border-border/60 pb-3">
             <div className="flex items-center gap-2">
-              <Package className="w-4 h-4 text-muted-foreground" />
+              <Package className="w-4 h-4 text-primary" />
               <h2 className="font-semibold">Items</h2>
             </div>
           </CardHeader>
           <CardContent className="pt-4 space-y-4">
             {order.items.map((item, i) => (
               <div key={i} data-testid={`order-item-${i}`}>
-                {i > 0 && <Separator className="mb-4" />}
+                {i > 0 && <Separator className="mb-4 bg-border/60" />}
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="font-medium text-sm">{item.productName}</p>
-                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                    <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                       <Badge variant="secondary" className="text-xs">{item.tierName}</Badge>
                       <span className="text-xs text-muted-foreground">{item.seats} seats</span>
-                      <Badge variant="outline" className="text-xs">{item.billingCycle}</Badge>
+                      <Badge variant="outline" className="text-xs border-border/60 capitalize">{item.billingCycle}</Badge>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">${item.unitPrice}/seat/mo</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-sm">${item.total.toFixed(2)}<span className="text-muted-foreground font-normal text-xs">/mo</span></p>
+                    <p className="neon-text font-bold text-sm">${item.total.toFixed(2)}<span className="text-muted-foreground font-normal text-xs">/mo</span></p>
                   </div>
                 </div>
               </div>
             ))}
-            <Separator />
+            <Separator className="bg-border/60" />
             <div className="flex justify-between">
               <span className="text-sm text-muted-foreground">Subtotal</span>
               <span className="text-sm">${Number(order.subtotal).toFixed(2)}/mo</span>
@@ -114,23 +114,23 @@ export default function OrderDetail() {
                 <span>-${Number(order.discount).toFixed(2)}</span>
               </div>
             )}
-            <div className="flex justify-between font-semibold" data-testid="text-total">
+            <div className="flex justify-between font-bold" data-testid="text-total">
               <span>Total</span>
-              <span>${Number(order.total).toFixed(2)}/mo</span>
+              <span className="neon-text">${Number(order.total).toFixed(2)}/mo</span>
             </div>
           </CardContent>
         </Card>
 
         <div className="grid sm:grid-cols-2 gap-4">
-          <Card>
-            <CardHeader className="border-b pb-3">
+          <Card className="neon-card">
+            <CardHeader className="border-b border-border/60 pb-3">
               <div className="flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-muted-foreground" />
+                <Building2 className="w-4 h-4 text-primary" />
                 <h2 className="font-semibold">Billing Info</h2>
               </div>
             </CardHeader>
             <CardContent className="pt-4 space-y-1 text-sm">
-              <p className="font-medium">{order.billing.companyName}</p>
+              <p className="font-semibold">{order.billing.companyName}</p>
               <p className="text-muted-foreground">{order.billing.contactName}</p>
               <p className="text-muted-foreground">{order.billing.email}</p>
               {order.billing.phone && <p className="text-muted-foreground">{order.billing.phone}</p>}
@@ -144,16 +144,16 @@ export default function OrderDetail() {
           </Card>
 
           {order.estimatedDelivery && (
-            <Card>
-              <CardHeader className="border-b pb-3">
+            <Card className="neon-card">
+              <CardHeader className="border-b border-border/60 pb-3">
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-muted-foreground" />
+                  <Calendar className="w-4 h-4 text-primary" />
                   <h2 className="font-semibold">Delivery</h2>
                 </div>
               </CardHeader>
               <CardContent className="pt-4 text-sm">
                 <p className="text-muted-foreground">Estimated activation</p>
-                <p className="font-medium mt-1" data-testid="text-estimated-delivery">
+                <p className="font-semibold neon-text mt-1" data-testid="text-estimated-delivery">
                   {new Date(order.estimatedDelivery).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">Access credentials will be emailed to your registered address.</p>
@@ -163,10 +163,10 @@ export default function OrderDetail() {
         </div>
 
         <div className="flex gap-3 pt-2">
-          <Button onClick={() => setLocation("/orders")} variant="outline" data-testid="button-view-all-orders">
+          <Button variant="outline" onClick={() => setLocation("/orders")} className="border-primary/30 hover:border-primary hover:neon-glow transition-all" data-testid="button-view-all-orders">
             All Orders
           </Button>
-          <Button onClick={() => setLocation("/")} data-testid="button-continue-shopping">
+          <Button className="neon-glow" onClick={() => setLocation("/")} data-testid="button-continue-shopping">
             Continue Shopping
           </Button>
         </div>
